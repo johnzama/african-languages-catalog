@@ -1,11 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-// Sample data representing some African languages
 const languages = [
-  { name: 'Swahili', region: 'East Africa' },
-  { name: 'Yoruba', region: 'West Africa' },
-  { name: 'Zulu', region: 'Southern Africa' },
-  { name: 'Amharic', region: 'Horn of Africa' },
+  { id: 1, name: 'Swahili', region: 'East Africa' },
+  { id: 2, name: 'Yoruba', region: 'West Africa' },
+  { id: 3, name: 'Zulu', region: 'Southern Africa' },
+  { id: 4, name: 'Amharic', region: 'Horn of Africa' },
 ];
 
 const LanguagesList = () => {
@@ -13,9 +13,11 @@ const LanguagesList = () => {
     <div>
       <h1>Languages of Africa</h1>
       <ul>
-        {languages.map((language, index) => (
-          <li key={index}>
-            <strong>{language.name}</strong> - {language.region}
+        {languages.map((language) => (
+          <li key={language.id}>
+            <Link to={`/languages/${language.id}`}>
+              <strong>{language.name}</strong> - {language.region}
+            </Link>
           </li>
         ))}
       </ul>
