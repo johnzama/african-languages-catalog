@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:14' // Use the official Node.js Docker image
+            args '-u root'  // Run as root to avoid permission issues
+        }
+    }
 
     stages {
         stage('Checkout') {
@@ -29,7 +34,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Placeholder for deployment step
-                // You can customize this step to fit your deployment method
                 echo 'Deploy step is currently a placeholder. Define your deployment method here.'
             }
         }
