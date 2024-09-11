@@ -1,23 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ReactPaginate from 'react-paginate';
-
-// Sample data representing some African languages
-const languages = [
-  { id: 1, name: 'Swahili', region: 'East Africa' },
-  { id: 2, name: 'Yoruba', region: 'West Africa' },
-  { id: 3, name: 'Zulu', region: 'Southern Africa' },
-  { id: 4, name: 'Amharic', region: 'Horn of Africa' },
-  // Add more sample data to test pagination
-];
+import axios from 'axios'; // Import axios for HTTP requests
 
 const LanguagesList = () => {
+  const [languages, setLanguages] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('All');
   const [currentPage, setCurrentPage] = useState(0);
+  const [loading, setLoading] = useState(true); // State to handle loading
 
   const itemsPerPage = 2; // Number of items per page
   const offset = currentPage * itemsPerPage;
+
+  // Fetch data from API on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('https://api.example.com/languages'); // Replace with your API URL
+        setLanguages(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Filter the languages based on search term and selected region
   const filteredLanguages = languages.filter(language =>
     (selectedRegion === 'All' || language.region === selectedRegion) &&
     (language.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -26,10 +39,14 @@ const LanguagesList = () => {
 
   const pageCount = Math.ceil(filteredLanguages.length / itemsPerPage);
 
+  // Handle page click to change the current page
   const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % filteredLanguages.length;
     setCurrentPage(event.selected);
   };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <div>
