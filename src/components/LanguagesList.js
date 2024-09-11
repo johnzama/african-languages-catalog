@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import ReactPaginate from 'react-paginate';
 
 // Sample data representing some African languages
 const languages = [
@@ -7,18 +8,28 @@ const languages = [
   { id: 2, name: 'Yoruba', region: 'West Africa' },
   { id: 3, name: 'Zulu', region: 'Southern Africa' },
   { id: 4, name: 'Amharic', region: 'Horn of Africa' },
+  // Add more sample data to test pagination
 ];
 
 const LanguagesList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('All');
+  const [currentPage, setCurrentPage] = useState(0);
 
-  // Filter languages based on the search term and selected region
+  const itemsPerPage = 2; // Number of items per page
+  const offset = currentPage * itemsPerPage;
   const filteredLanguages = languages.filter(language =>
     (selectedRegion === 'All' || language.region === selectedRegion) &&
     (language.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
      language.region.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const pageCount = Math.ceil(filteredLanguages.length / itemsPerPage);
+
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % filteredLanguages.length;
+    setCurrentPage(event.selected);
+  };
 
   return (
     <div>
@@ -41,9 +52,9 @@ const LanguagesList = () => {
         <option value="Horn of Africa">Horn of Africa</option>
       </select>
 
-      {/* Display filtered list of languages */}
+      {/* Display filtered and paginated list of languages */}
       <ul>
-        {filteredLanguages.map((language) => (
+        {filteredLanguages.slice(offset, offset + itemsPerPage).map((language) => (
           <li key={language.id}>
             <Link to={`/languages/${language.id}`}>
               <strong>{language.name}</strong> - {language.region}
@@ -51,6 +62,19 @@ const LanguagesList = () => {
           </li>
         ))}
       </ul>
+
+      {/* Pagination controls */}
+      <ReactPaginate
+        previousLabel={'Previous'}
+        nextLabel={'Next'}
+        breakLabel={'...'}
+        pageCount={pageCount}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={5}
+        onPageChange={handlePageClick}
+        containerClassName={'pagination'}
+        activeClassName={'active'}
+      />
     </div>
   );
 };
