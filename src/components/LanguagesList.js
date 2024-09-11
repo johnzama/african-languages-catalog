@@ -11,11 +11,13 @@ const languages = [
 
 const LanguagesList = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState('All');
 
-  // Filter languages based on the search term
+  // Filter languages based on the search term and selected region
   const filteredLanguages = languages.filter(language =>
-    language.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    language.region.toLowerCase().includes(searchTerm.toLowerCase())
+    (selectedRegion === 'All' || language.region === selectedRegion) &&
+    (language.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+     language.region.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -29,6 +31,15 @@ const LanguagesList = () => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+
+      {/* Dropdown filter for selecting a region */}
+      <select value={selectedRegion} onChange={(e) => setSelectedRegion(e.target.value)}>
+        <option value="All">All Regions</option>
+        <option value="East Africa">East Africa</option>
+        <option value="West Africa">West Africa</option>
+        <option value="Southern Africa">Southern Africa</option>
+        <option value="Horn of Africa">Horn of Africa</option>
+      </select>
 
       {/* Display filtered list of languages */}
       <ul>
